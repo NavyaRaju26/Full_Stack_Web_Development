@@ -30,3 +30,10 @@ export default function App()
 {
   return< StudentForm/>;
 }
+
+
+import Form from "./FSWD/Sample/Form";
+export default function App()
+{
+  return<Form/>;
+}
