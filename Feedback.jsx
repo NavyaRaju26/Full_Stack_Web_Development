@@ -1,157 +1,125 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-export default function App() {
-  const [form, setForm] = useState({
+export default function Feedback() {
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
-    rating: "",
-    feedback: "",
+    message: "",
   });
 
-  const [submitted, setSubmitted] = useState(null);
+  const [feedbackList, setFeedbackList] = useState([]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(form);
-    setForm({ name: "", email: "", rating: "", feedback: "" });
+
+    if (!formData.name || !formData.email || !formData.message) return;
+
+    setFeedbackList([...feedbackList, formData]);
+    setFormData({ name: "", email: "", message: "" });
   };
 
   return (
-    <div style={styles.page}>
-      {/* FORM CARD */}
-      <div style={styles.card}>
-        <h2 style={styles.title}>Feedback Form</h2>
-        <h2>Feedback Form</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            style={styles.input}
-            name="name"
-            placeholder="Your Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
+    <div style={styles.container}>
+      <h2>Feedback Form</h2>
 
-          <input
-            style={styles.input}
-            name="email"
-            type="email"
-            placeholder="Your Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Your Name"
+          value={formData.name}
+          onChange={handleChange}
+          style={styles.input}
+        />
 
-          <select
-            style={styles.input}
-            name="rating"
-            value={form.rating}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Rate Us</option>
-            <option>Excellent</option>
-            <option>Good</option>
-            <option>Average</option>
-            <option>Poor</option>
-          </select>
+        <input
+          type="email"
+          name="email"
+          placeholder="Your Email"
+          value={formData.email}
+          onChange={handleChange}
+          style={styles.input}
+        />
 
-          <textarea
-            style={styles.textarea}
-            name="feedback"
-            placeholder="Write your feedback here..."
-            value={form.feedback}
-            onChange={handleChange}
-            required
-          />
+        <textarea
+          name="message"
+          placeholder="Your Feedback"
+          value={formData.message}
+          onChange={handleChange}
+          style={styles.textarea}
+        />
 
-          <button style={styles.button}>Submit Feedback</button>
-        </form>
-      </div>
+        <button type="submit" style={styles.button}>
+          Submit Feedback
+        </button>
+      </form>
 
-      {/* OUTPUT CARD */}
-      <div style={styles.card}>
-        <h2 style={styles.title}>Submitted Feedback</h2>
+      <h3>Submitted Feedback</h3>
 
-        {submitted ? (
-          <div style={styles.output}>
-            <p><b>Name:</b> {submitted.name}</p>
-            <p><b>Email:</b> {submitted.email}</p>
-            <p><b>Rating:</b> {submitted.rating}</p>
-            <p><b>Feedback:</b> {submitted.feedback}</p>
-          </div>
-        ) : (
-          <p style={{ color: "#555" }}>No feedback submitted yet.</p>
-        )}
-      </div>
+      {feedbackList.length === 0 ? (
+        <p>No feedback yet.</p>
+      ) : (
+        <ul style={styles.list}>
+          {feedbackList.map((feedback, index) => (
+            <li key={index} style={styles.card}>
+              <strong>{feedback.name}</strong> ({feedback.email})
+              <p>{feedback.message}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
 const styles = {
-  page: {
-    minHeight: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "40px",
-    background: "linear-gradient(135deg, #7dd3fc, #60a5fa)",
-    padding: "30px",
+  container: {
+    maxWidth: "500px",
+    margin: "40px auto",
+    padding: "20px",
     fontFamily: "Arial, sans-serif",
+    border: "1px solid #ddd",
+    borderRadius: "8px",
   },
-
-  card: {
-    width: "360px",
-    background: "#ffffff",
-    padding: "25px",
-    borderRadius: "16px",
-    boxShadow: "0 15px 30px rgba(0,0,0,0.15)",
-  },
-
-  title: {
-    textAlign: "center",
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
     marginBottom: "20px",
   },
-
   input: {
-    width: "100%",
-    padding: "12px",
-    marginBottom: "14px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    fontSize: "15px",
-    color: "#000", // 🔥 text visible
+    padding: "8px",
+    fontSize: "16px",
   },
-
   textarea: {
-    width: "100%",
-    height: "100px",
-    padding: "12px",
-    marginBottom: "14px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    fontSize: "15px",
-    resize: "none",
-    color: "#000",
+    padding: "8px",
+    fontSize: "16px",
+    minHeight: "80px",
   },
-
   button: {
-    width: "100%",
-    padding: "12px",
-    borderRadius: "10px",
-    border: "none",
-    background: "linear-gradient(90deg, #6366f1, #8b5cf6)",
-    color: "#fff",
+    padding: "10px",
     fontSize: "16px",
     cursor: "pointer",
+    backgroundColor: "#4CAF50",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
   },
-
-  output: {
-    color: "#000",
-    lineHeight: "1.8",
+  list: {
+    listStyle: "none",
+    padding: 0,
+  },
+  card: {
+    padding: "10px",
+    marginBottom: "10px",
+    border: "1px solid #eee",
+    borderRadius: "6px",
+    backgroundColor: "#fafafa",
   },
 };
+
